@@ -1,0 +1,89 @@
+const express = require('express');
+const axios = require('axios');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(bodyParser.json());
+app.use(cors());
+
+const API_KEY = '8a7c8a5e544a4a8d9191af62a6bc7fdb';
+
+app.get("/", (req, res) => {
+    res.json({ message: 'Welcome to the Recipe API' });
+});
+
+app.post('/getRecipesByIngredients', async (req, res) => {
+    const ingredients = req.body.ingredients;
+
+    try {
+        const response = await axios.get(`https://api.spoonacular.com/recipes/findByIngredients`, {
+            params: {
+                ingredients: ingredients.join(','),
+                number: 5,
+                limitLicense: true,
+                ranking: 1,
+                ignorePantry: false,
+                apiKey: API_KEY,
+            },
+        });
+        // res.json(response.data); // Send the JSON data directly
+        res.json({data:response.data});
+        
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(500).send(error.message);
+        } else {
+          res.status(500).send('An unexpected error occurred');
+        }
+      }
+    });
+    
+    app.post('/getRecipesByCuisine', async (req, res) => {
+      const cuisine = req.body.cuisine;
+      
+      try {
+        const response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch`, {
+          params: {
+            cuisine,
+            number: 5,
+            apiKey: API_KEY,
+          },
+        });
+        // res.json(response.data);
+        res.json({data:response.data});
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(500).send(error.message);
+        } else {
+          res.status(500).send('An unexpected error occurred');
+        }
+      }
+    });
+    app.post('/getRecipesById', async(req, res) => {
+      const cuisine = req.body.cuisine;
+      console.log(cuisine);
+      try {
+        const response = await axios.get(`https://api.spoonacular.com/recipes/informationBulk`, {
+          params: {
+            ids: cuisine,
+            apiKey: API_KEY,
+          },
+        });
+        // res.json(response.data);
+        console.log(response.data);
+        res.json({data:response.data});
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(500).send(error.message);
+        } else {
+          res.status(500).send('An unexpected error occurred');
+        }
+      }
+    })
+    
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });

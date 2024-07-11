@@ -1,25 +1,3 @@
-.App {
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
-
-.recipes {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.recipe {
-  margin: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  width: 200px;
-  text-align: center;
-}
-
-.recipe img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 5px;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

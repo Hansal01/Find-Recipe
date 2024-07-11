@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import axios from 'axios';
 import './App.css';
-import sanitizeHtml from 'sanitize-html'; // Import sanitize-html for HTML sanitization
+import sanitizeHtml from 'sanitize-html';
 
 interface Recipe {
   id: number;
@@ -10,6 +10,8 @@ interface Recipe {
 }
 
 interface DetailedRecipe {
+  image: string | undefined;
+  title: ReactNode;
   vegetarian: boolean;
   vegan: boolean;
   glutenFree: boolean;
@@ -53,7 +55,7 @@ interface DetailedRecipe {
       };
     };
   }[];
-  instructions: string; // Update interface to include instructions as a string
+  instructions: string;
 }
 
 const App: React.FC = () => {
@@ -62,16 +64,16 @@ const App: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<DetailedRecipe | null>(null);
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   const getRecipesByIngredients = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       const response = await axios.post('http://localhost:3000/getRecipesByIngredients', {
         ingredients: ingredients.split(',').map((item) => item.trim()),
       });
-      setRecipes(response.data.data); // Assuming response.data is an array of Recipe objects
-      setSelectedRecipe(null); // Clear selected recipe when new search is made
+      setRecipes(response.data.data);
+      setSelectedRecipe(null);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -83,79 +85,90 @@ const App: React.FC = () => {
       const response = await axios.post('http://localhost:3000/getRecipesByCuisine', {
         cuisine,
       });
-      setRecipes(response.data.data); // Assuming response.data is an array of Recipe objects
-      setSelectedRecipe(null); // Clear selected recipe when new search is made
+      setRecipes(response.data.data);
+      setSelectedRecipe(null);
+      setError('');
     } catch (error) {
       console.error('Error:', error);
+      setError('Failed to fetch recipes');
     }
   };
 
   const getDetailedRecipe = async (recipeId: number) => {
-    console.log(recipeId);
     try {
-      const response = await axios.post(`http://localhost:3000/getRecipesById`,{
-        cuisine:recipeId,
-
-      }); // Replace with your backend endpoint for detailed recipe
-      setSelectedRecipe(response.data.data[0]); // Assuming response.data is a DetailedRecipe object
-      setShowPopup(true); // Show the popup
+      const response = await axios.post(`http://localhost:3000/getRecipesById`, {
+        cuisine: recipeId,
+      });
+      setSelectedRecipe(response.data.data[0]);
+      setShowPopup(true);
     } catch (error) {
       console.error('Error fetching detailed recipe:', error);
     }
   };
+
   const closePopup = () => {
-    setShowPopup(false); // Close the popup
+    setShowPopup(false);
   };
 
   return (
-    <div className="App">
-      <h1>AI-Powered Recipe Recommendation App</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+      <h1 className="text-4xl font-bold mb-6 text-center">AI-Powered Recipe Recommendation App</h1>
 
-      <form onSubmit={getRecipesByIngredients}>
-        <h2>Get Recipes by Ingredients</h2>
-        <input
-          type="text"
-          value={ingredients}
-          onChange={(e) => setIngredients(e.target.value)}
-          placeholder="Enter ingredients, e.g., apples, flour, sugar"
-        />
-        <button type="submit">Get Recipes</button>
-      </form>
+      <div className="w-full max-w-lg mb-6">
+        <form onSubmit={getRecipesByIngredients} className="mb-4">
+          <h2 className="text-2xl font-semibold mb-2 text-center">Get Recipes by Ingredients</h2>
+          <input
+            type="text"
+            value={ingredients}
+            onChange={(e) => setIngredients(e.target.value)}
+            placeholder="Enter ingredients, e.g., apples, flour, sugar"
+            className="border p-2 w-full mb-2 rounded"
+          />
+          <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">Get Recipes</button>
+        </form>
+      </div>
 
-      <form onSubmit={getRecipesByCuisine}>
-        <h2>Get Recipes by Cuisine</h2>
-        <input
-          type="text"
-          value={cuisine}
-          onChange={(e) => setCuisine(e.target.value)}
-          placeholder="Enter cuisine, e.g., Italian"
-        />
-        <button type="submit">Get Recipes</button>
-      </form>
+      <div className="w-full max-w-lg mb-6">
+        <form onSubmit={getRecipesByCuisine} className="mb-4">
+          <h2 className="text-2xl font-semibold mb-2 text-center">Get Recipes by Cuisine</h2>
+          <input
+            type="text"
+            value={cuisine}
+            onChange={(e) => setCuisine(e.target.value)}
+            placeholder="Enter cuisine, e.g., Italian"
+            className="border p-2 w-full mb-2 rounded"
+          />
+          <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">Get Recipes</button>
+        </form>
+        {error && <p className="text-red-500 text-center">{error}</p>}
+      </div>
 
-      <div className="recipes">
-        {recipes.map((recipe, index) => (
-          <div key={index} className="recipe" onClick={() => getDetailedRecipe(recipe.id)}>
-            <h3>{recipe.title}</h3>
-            <img src={recipe.image} alt={recipe.title} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-6xl">
+        {recipes.map((recipe) => (
+          <div
+            key={recipe.id}
+            className="recipe border p-4 rounded shadow cursor-pointer bg-white"
+            onClick={() => getDetailedRecipe(recipe.id)}
+          >
+            <h3 className="text-xl font-semibold mb-2">{recipe.title}</h3>
+            {recipe.image && <img src={recipe.image} alt={recipe.title} className="w-full h-40 object-cover" />}
           </div>
         ))}
       </div>
 
       {showPopup && selectedRecipe && (
-        <div className="popup">
-          <div className="popup-content">
-            <span className="close" onClick={closePopup}>&times;</span>
-            <h2>{selectedRecipe.title}</h2>
-            <img src={selectedRecipe.image} alt={selectedRecipe.title} />
-            <h3>Ingredients:</h3>
-            <ul>
+        <div className="popup fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="popup-content bg-white p-6 rounded shadow-lg relative max-w-2xl mx-auto">
+            <span className="close absolute top-0 right-0 p-4 cursor-pointer text-xl" onClick={closePopup}>&times;</span>
+            <h2 className="text-2xl font-bold mb-4">{selectedRecipe.title}</h2>
+            <img src={selectedRecipe.image} alt={selectedRecipe.title} className="w-full h-64 object-cover mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Ingredients:</h3>
+            <ul className="list-disc list-inside mb-4">
               {selectedRecipe.extendedIngredients.map((ingredient, index) => (
                 <li key={index}>{ingredient.original}</li>
               ))}
             </ul>
-            <h3>Instructions:</h3>
-            {/* Render HTML content safely */}
+            <h3 className="text-xl font-semibold mb-2">Instructions:</h3>
             <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedRecipe.instructions) }} />
           </div>
         </div>

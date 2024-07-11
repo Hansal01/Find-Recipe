@@ -43,19 +43,19 @@ app.post('/getRecipesByIngredients', async (req, res) => {
     
     app.post('/getRecipesByCuisine', async (req, res) => {
       const cuisine = req.body.cuisine;
-      
+    
       try {
         const response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch`, {
           params: {
-            cuisine,
+            cuisine: cuisine,
             number: 5,
             apiKey: API_KEY,
           },
         });
-        // res.json(response.data);
-        res.json({data:response.data});
+        res.json({ data: response.data });
       } catch (error) {
         if (error instanceof Error) {
+          console.error(error)
           res.status(500).send(error.message);
         } else {
           res.status(500).send('An unexpected error occurred');

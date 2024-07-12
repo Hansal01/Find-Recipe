@@ -85,7 +85,7 @@ const App: React.FC = () => {
       const response = await axios.post('http://localhost:3000/getRecipesByCuisine', {
         cuisine,
       });
-      setRecipes(response.data.data);
+      setRecipes(response.data.data.results);
       setSelectedRecipe(null);
       setError('');
     } catch (error) {
@@ -111,8 +111,8 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-4xl font-bold mb-6 text-center">AI-Powered Recipe Recommendation App</h1>
+    <div className="app-container">
+      <h1 className="text-4xl font-bold mb-6 text-center">Recipe Recommendation App</h1>
 
       <div className="w-full max-w-lg mb-6">
         <form onSubmit={getRecipesByIngredients} className="mb-4">
@@ -143,7 +143,6 @@ const App: React.FC = () => {
         {error && <p className="text-red-500 text-center">{error}</p>}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-6xl">
         {recipes.map((recipe) => (
           <div
             key={recipe.id}
@@ -154,14 +153,13 @@ const App: React.FC = () => {
             {recipe.image && <img src={recipe.image} alt={recipe.title} className="w-full h-40 object-cover" />}
           </div>
         ))}
-      </div>
 
       {showPopup && selectedRecipe && (
         <div className="popup fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="popup-content bg-white p-6 rounded shadow-lg relative max-w-2xl mx-auto">
             <span className="close absolute top-0 right-0 p-4 cursor-pointer text-xl" onClick={closePopup}>&times;</span>
             <h2 className="text-2xl font-bold mb-4">{selectedRecipe.title}</h2>
-            <img src={selectedRecipe.image} alt={selectedRecipe.title} className="w-full h-64 object-cover mb-4" />
+            <img src={selectedRecipe.image} className="w-full h-64 object-cover mb-4" />
             <h3 className="text-xl font-semibold mb-2">Ingredients:</h3>
             <ul className="list-disc list-inside mb-4">
               {selectedRecipe.extendedIngredients.map((ingredient, index) => (

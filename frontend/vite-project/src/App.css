@@ -1,3 +1,56 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom CSS for background image and content styling */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.app-container {
+  background-image: url('./assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+form, .grid, .popup-content {
+  background: blue;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.popup {
+  backdrop-filter: blur(5px);
+}
+
+.recipe img, .popup img {
+  border-radius: 10px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.6); /* Semi-transparent white overlay */
+    z-index: 1;
+  }
+  
+  .content {
+    position: relative;
+    z-index: 2;
+  }

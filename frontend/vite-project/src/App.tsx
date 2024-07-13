@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 import sanitizeHtml from 'sanitize-html';
@@ -14,8 +14,6 @@ const App: React.FC = () => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
-  const detailedRecipeRef = useRef<HTMLDivElement | null>(null);
-
   const getDetailedRecipe = async (recipeId: number) => {
     try {
       const response = await axios.post('http://localhost:3000/getRecipesById', {
@@ -23,11 +21,6 @@ const App: React.FC = () => {
       });
       setSelectedRecipe(response.data.data[0]);
       setShowPopup(true);
-
-      // Scroll to detailed recipe section
-      if (detailedRecipeRef.current) {
-        detailedRecipeRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
     } catch (error) {
       console.error('Error fetching detailed recipe:', error);
     }
@@ -85,24 +78,6 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Detailed Recipe Section */}
-      <div ref={detailedRecipeRef} className="mt-8 p-8 bg-gray-200 rounded">
-        {selectedRecipe && (
-          <>
-            <h2 className="text-2xl font-bold mb-4">{selectedRecipe.title}</h2>
-            <img src={selectedRecipe.image} alt={selectedRecipe.title} className="w-full h-64 object-cover mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Ingredients:</h3>
-            <ul className="list-disc list-inside mb-4">
-              {selectedRecipe.extendedIngredients.map((ingredient, index) => (
-                <li key={index}>{ingredient.original}</li>
-              ))}
-            </ul>
-            <h3 className="text-xl font-semibold mb-2">Instructions:</h3>
-            <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedRecipe.instructions) }} />
-          </>
-        )}
-      </div>
     </div>
   );
 };

@@ -20,7 +20,7 @@ app.post('/getRecipesByIngredients', async (req, res) => {
 
     try {
         const response = await axios.get(`https://api.spoonacular.com/recipes/findByIngredients`, {
-            params: {
+            params: { 
                 ingredients: ingredients.join(','),
                 number: 5,
                 limitLicense: true,
@@ -83,6 +83,27 @@ app.post('/getRecipesByIngredients', async (req, res) => {
         }
       }
     })
+
+    app.post('/getRecipesByName', async (req, res) => {
+      const foodName = req.body.foodName;
+  
+      try {
+          const response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch`, {
+              params: {
+                  query: foodName,
+                  number: 5,
+                  apiKey: API_KEY,
+              },
+          });
+          res.json({ data: response.data });
+      } catch (error) {
+          if (error instanceof Error) {
+              res.status(500).send(error.message);
+          } else {
+              res.status(500).send('An unexpected error occurred');
+          }
+      }
+  });
     
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);

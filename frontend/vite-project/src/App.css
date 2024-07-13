@@ -2,55 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS for background image and content styling */
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 .app-container {
   background-image: url('./assets/background.jpg');
-  background-size: cover;
+  background-size: cover !important; /* Ensure the background image covers the entire container */
   background-position: center;
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh; /* Ensure full viewport height */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* Center content vertically */
   padding: 20px;
-  overflow: auto;
   box-sizing: border-box;
+  text-align: center;
+  color: black;
 }
 
-form, .grid, .popup-content {
+.form-container {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
+
+.form {
   background: blue;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.form-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.form-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center items horizontally */
+}
+
+.form-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px 0 0 5px;
+  margin-right: 10px;
+}
+
+.form-button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+}
+
+.recipes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.recipe {
+  width: calc(33.33% - 20px);
+  margin: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.recipe:hover {
+  transform: translateY(-5px);
+}
+
 .popup {
-  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.recipe img, .popup img {
+.popup-content {
+  background: white;
+  padding: 20px;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 80%;
 }
 
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.6); /* Semi-transparent white overlay */
-    z-index: 1;
-  }
-  
-  .content {
-    position: relative;
-    z-index: 2;
-  }
+.close {
+  cursor: pointer;
+}

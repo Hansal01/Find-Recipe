@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
-const API_KEY = '8a7c8a5e544a4a8d9191af62a6bc7fdb';
+const API_KEY = 'aac33a48195744fc9c9f55d6eb395b39';
 
 app.get("/", (req, res) => {
     res.json({ message: 'Welcome to the Recipe API' });

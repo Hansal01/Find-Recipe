@@ -31,7 +31,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="app-container">
+    <div className={`app-container`}  >
       <h1 className="text-4xl font-bold mb-6 text-center">Recipe Recommendation App</h1>
 
       <div className="form-container">
@@ -44,7 +44,7 @@ const App: React.FC = () => {
       </div>
 
       <div className="form-container">
-        <FoodNameForm setRecipes={setRecipes} setSelectedRecipe={setSelectedRecipe} setError={setError} />
+        <FoodNameForm setRecipes={setRecipes} setSelectedRecipe={setSelectedRecipe} setErrorMsg={setError} />
         {error && <p className="error-message">{error}</p>}
       </div>
 
